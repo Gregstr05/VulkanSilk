@@ -65,7 +65,7 @@ struct Vector {
         return vec;
     }
 
-    constexpr int Length()
+    constexpr T Length()
     {
         T sum = 0;
         for (size_t i = 0; i < N; ++i)
@@ -73,6 +73,24 @@ struct Vector {
         return sqrt(sum);
     }
 
+    constexpr Vector Normalize()
+    {
+        Vector vec;
+        size_t len = Length();
+        for (size_t i = 0; i < N; ++i)
+        {
+            vec[i] = members[i] / len;
+        }
+        return vec;
+    }
+
+    constexpr T Dot(const Vector& other)
+    {
+        T sum = 0;
+        for (size_t i = 0; i < N; ++i)
+            sum += members[i] * other[i];
+        return sum;
+    }
 };
 
 template <typename T>
