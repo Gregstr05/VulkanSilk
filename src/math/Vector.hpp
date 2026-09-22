@@ -5,6 +5,7 @@
 #pragma once
 #include <cstddef>
 #include <type_traits>
+#include <cmath>
 
 namespace silk::math {
 
@@ -47,6 +48,29 @@ struct Vector {
             vec[i] = members[i] * x;
         }
         return vec;
+    }
+
+    constexpr void operator+=(const Vector& other)
+    {
+        this = this+=(other);
+    }
+
+    constexpr Vector operator+(const size_t x)
+    {
+        Vector vec;
+        for (size_t i = 0; i < N; ++i)
+        {
+            vec[i] = members[i] + x;
+        }
+        return vec;
+    }
+
+    constexpr int Length()
+    {
+        T sum = 0;
+        for (size_t i = 0; i < N; ++i)
+            sum += pow(members[i], 2);
+        return sqrt(sum);
     }
 
 };
