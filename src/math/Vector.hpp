@@ -13,24 +13,48 @@ template <typename Derived, typename T, std::size_t N>
 struct VectorOps {
     static_assert(std::is_standard_layout_v<T>, "T must be standard layout");
 
-    T members[N];
+    [[nodiscard]] constexpr T& operator[](std::size_t i)
+    {
+        return static_cast<Derived&>(*this).members[i];
+    }
+    [[nodiscard]] constexpr const T& operator[](std::size_t i) const
+    {
+        return static_cast<const Derived&>(*this).members[i];
+    }
 
-    [[nodiscard]] constexpr T& operator[](std::size_t i) {return members[i];}
-    [[nodiscard]] constexpr const T& operator[](std::size_t i) const {return members[i];}
+    friend constexpr bool operator==(const Derived& lhs, const Derived& rhs)
+    {
+        for (std::size_t i = 0; i < N; ++i)
+        {
+            if (lhs[i] != rhs[i])
+                return false;
+        }
+        return true;
+    }
 
-    constexpr T* begin() {return members;}
-    constexpr const T* begin() const {return members;}
-    constexpr T* end() {return members + N;}
-    constexpr const T* end() const {return members + N;}
+    constexpr T* begin() { return static_cast<Derived&>(*this).members; }
+    constexpr const T* begin() const {
+        return static_cast<const Derived&>(*this).members;
+    }
+    constexpr T* end() { return begin() + N; }
+    constexpr const T* end() const { return begin() + N; }
 
-    constexpr std::size_t size() const {return N;}
+    static constexpr std::size_t Size() { return N; }
 
     constexpr Derived operator+(const Derived& other) const
     {
         Derived vec;
         for (size_t i = 0; i < N; ++i)
         {
-            vec[i] = members[i] + other[i];
+            vec[i] = (*this)[i] + other[i];
+        }
+        return vec;
+    }
+
+    constexpr Derived operator-() const {
+        Derived vec;
+        for (std::size_t i = 0; i < N; ++i) {
+            vec[i] = -(*this)[i];
         }
         return vec;
     }
@@ -40,69 +64,71 @@ struct VectorOps {
         return *this+(-other);
     }
 
-    constexpr Derived operator*(const size_t x) const
+    constexpr Derived operator*(const T x) const
     {
         Derived vec;
         for (size_t i = 0; i < N; ++i)
         {
-            vec[i] = members[i] * x;
+            vec[i] = (*this)[i] * x;
         }
         return vec;
     }
 
-    constexpr void operator+=(const Derived& other)
-    {
-        *this = *this+(other);
+    constexpr Derived& operator+=(const Derived& other) {
+        auto& self = static_cast<Derived&>(*this);
+        self = self + other;
+        return self;
     }
 
-    constexpr Derived operator+(const size_t x)
+    constexpr Derived operator+(const T x) const
     {
         Derived vec;
         for (size_t i = 0; i < N; ++i)
         {
-            vec[i] = members[i] + x;
+            vec[i] = (*this)[i] + x;
         }
         return vec;
     }
 
-    constexpr T Length()
+    constexpr T Length() const
     {
         T sum = 0;
         for (size_t i = 0; i < N; ++i)
-            sum += pow(members[i], 2);
-        return sqrt(sum);
+            sum += pow((*this)[i], 2);
+        return std::sqrt(sum);
     }
 
-    constexpr Derived Normalize()
+    constexpr Derived Normalize() const
     {
         Derived vec;
         T len = Length();
         for (size_t i = 0; i < N; ++i)
         {
-            vec[i] = members[i] / len;
+            vec[i] = (*this)[i] / len;
         }
         return vec;
     }
 
-    constexpr T Dot(const Derived& other)
+    constexpr T Dot(const Derived& other) const
     {
         T sum = 0;
         for (size_t i = 0; i < N; ++i)
-            sum += members[i] * other[i];
+            sum += (*this)[i] * other[i];
         return sum;
     }
 };
 
 template <typename T, size_t N>
 struct Vector : VectorOps<Vector<T, N>, T, N> {
-    T members[N];
+    T members[N]{};
 };
 
 template <typename T>
 struct Vector<T, 2> : VectorOps<Vector<T, 2>, T, 2> {
     union {
         struct {T x, y;};
-        T members[2];
+        struct {T u, w;};
+        T members[2]{};
     };
 };
 
@@ -111,7 +137,7 @@ struct Vector<T, 3> : VectorOps<Vector<T, 3>, T, 3> {
     union {
         struct {T x, y, z;};
         struct {T r, g, b;};
-        T members[3];
+        T members[3]{};
     };
 };
 
@@ -120,7 +146,7 @@ struct Vector<T, 4> : VectorOps<Vector<T, 4>, T, 4> {
     union {
         struct {T x, y, z, w;};
         struct {T r, g, b, a;};
-        T members[4];
+        T members[4]{};
     };
 };
 
