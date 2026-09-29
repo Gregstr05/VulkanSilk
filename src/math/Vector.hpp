@@ -130,6 +130,10 @@ struct Vector<T, 2> : VectorOps<Vector<T, 2>, T, 2> {
         struct {T u, w;};
         T members[2]{};
     };
+
+    Vector(T x, T y) : x(x), y(y)
+    {
+    }
 };
 
 template <typename T>
@@ -139,6 +143,10 @@ struct Vector<T, 3> : VectorOps<Vector<T, 3>, T, 3> {
         struct {T r, g, b;};
         T members[3]{};
     };
+
+    Vector(T x, T y, T z) : x(x), y(y), z(z)
+    {
+    }
 };
 
 template <typename T>
@@ -148,6 +156,10 @@ struct Vector<T, 4> : VectorOps<Vector<T, 4>, T, 4> {
         struct {T r, g, b, a;};
         T members[4]{};
     };
+
+    Vector(T x, T y, T z, T w) : x(x), y(y), z(z), w(w)
+    {
+    }
 };
 
 using Vector2 = Vector<float, 2>;
