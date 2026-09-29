@@ -9,8 +9,8 @@
 
 namespace silk::math {
 
-template <typename T, std::size_t N>
-struct Vector {
+template <typename Derived, typename T, std::size_t N>
+struct VectorOps {
     static_assert(std::is_standard_layout_v<T>, "T must be standard layout");
 
     T members[N];
@@ -25,9 +25,9 @@ struct Vector {
 
     constexpr std::size_t size() const {return N;}
 
-    constexpr Vector operator+(const Vector& other) const
+    constexpr Derived operator+(const Derived& other) const
     {
-        Vector vec;
+        Derived vec;
         for (size_t i = 0; i < N; ++i)
         {
             vec[i] = members[i] + other[i];
@@ -35,14 +35,14 @@ struct Vector {
         return vec;
     }
 
-    constexpr Vector operator-(const Vector& other) const
+    constexpr Derived operator-(const Derived& other) const
     {
-        return this+(-other);
+        return *this+(-other);
     }
 
-    constexpr Vector operator*(const size_t x) const
+    constexpr Derived operator*(const size_t x) const
     {
-        Vector vec;
+        Derived vec;
         for (size_t i = 0; i < N; ++i)
         {
             vec[i] = members[i] * x;
@@ -50,14 +50,14 @@ struct Vector {
         return vec;
     }
 
-    constexpr void operator+=(const Vector& other)
+    constexpr void operator+=(const Derived& other)
     {
-        this = this+=(other);
+        *this = *this+(other);
     }
 
-    constexpr Vector operator+(const size_t x)
+    constexpr Derived operator+(const size_t x)
     {
-        Vector vec;
+        Derived vec;
         for (size_t i = 0; i < N; ++i)
         {
             vec[i] = members[i] + x;
@@ -73,10 +73,10 @@ struct Vector {
         return sqrt(sum);
     }
 
-    constexpr Vector Normalize()
+    constexpr Derived Normalize()
     {
-        Vector vec;
-        size_t len = Length();
+        Derived vec;
+        T len = Length();
         for (size_t i = 0; i < N; ++i)
         {
             vec[i] = members[i] / len;
@@ -84,7 +84,7 @@ struct Vector {
         return vec;
     }
 
-    constexpr T Dot(const Vector& other)
+    constexpr T Dot(const Derived& other)
     {
         T sum = 0;
         for (size_t i = 0; i < N; ++i)
@@ -93,8 +93,13 @@ struct Vector {
     }
 };
 
+template <typename T, size_t N>
+struct Vector : VectorOps<Vector<T, N>, T, N> {
+    T members[N];
+};
+
 template <typename T>
-struct Vector<T, 2> {
+struct Vector<T, 2> : VectorOps<Vector<T, 2>, T, 2> {
     union {
         struct {T x, y;};
         T members[2];
@@ -102,7 +107,7 @@ struct Vector<T, 2> {
 };
 
 template <typename T>
-struct Vector<T, 3> {
+struct Vector<T, 3> : VectorOps<Vector<T, 3>, T, 3> {
     union {
         struct {T x, y, z;};
         struct {T r, g, b;};
@@ -111,7 +116,7 @@ struct Vector<T, 3> {
 };
 
 template <typename T>
-struct Vector<T, 4> {
+struct Vector<T, 4> : VectorOps<Vector<T, 4>, T, 4> {
     union {
         struct {T x, y, z, w;};
         struct {T r, g, b, a;};
