@@ -94,7 +94,7 @@ struct VectorOps {
     {
         T sum = 0;
         for (size_t i = 0; i < N; ++i)
-            sum += pow((*this)[i], 2);
+            sum += ((*this)[i] * (*this)[i]);
         return std::sqrt(sum);
     }
 
@@ -131,6 +131,8 @@ struct Vector<T, 2> : VectorOps<Vector<T, 2>, T, 2> {
         T members[2]{};
     };
 
+    Vector() = default;
+
     Vector(T x, T y) : x(x), y(y)
     {
     }
@@ -144,8 +146,19 @@ struct Vector<T, 3> : VectorOps<Vector<T, 3>, T, 3> {
         T members[3]{};
     };
 
+    Vector() = default;
+
     Vector(T x, T y, T z) : x(x), y(y), z(z)
     {
+    }
+
+    constexpr Vector Cross(const Vector& other) const
+    {
+        return Vector(
+            y * other.z - z * other.y,
+            z * other.x - x * other.z,
+            x * other.y - y * other.x
+        );
     }
 };
 
@@ -156,6 +169,8 @@ struct Vector<T, 4> : VectorOps<Vector<T, 4>, T, 4> {
         struct {T r, g, b, a;};
         T members[4]{};
     };
+
+    Vector() = default;
 
     Vector(T x, T y, T z, T w) : x(x), y(y), z(z), w(w)
     {

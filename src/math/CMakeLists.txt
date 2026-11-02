@@ -17,7 +17,11 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(Catch2)
 
-add_executable(SilkMathTests tests/Vector.tests.cpp)
+file(GLOB
+        tests CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/tests/*.tests.cpp"
+)
+
+add_executable(SilkMathTests ${tests})
 target_link_libraries(SilkMathTests PRIVATE Silk::Math Catch2::Catch2WithMain)
 
 enable_testing()
