@@ -4,6 +4,8 @@ project(VulkanSilk)
 
 add_subdirectory(src/math)
 add_subdirectory(src/vk)
+add_subdirectory(src/app)
+add_subdirectory(src/window)
 
 include(FetchContent)
 FetchContent_Declare(glfw
@@ -17,10 +19,11 @@ FetchContent_MakeAvailable(glfw)
 
 add_executable(Sandbox
         src/main.cpp
-        src/app/Runner.cpp
 )
 
-target_link_libraries(Sandbox PUBLIC Silk::Math Silk::VK glfw)
+target_include_directories(Sandbox PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
+
+target_link_libraries(Sandbox PRIVATE Silk::App Silk::Math Silk::Window)
 
 set_property(TARGET Sandbox PROPERTY CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
