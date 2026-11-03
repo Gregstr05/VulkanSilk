@@ -17,6 +17,7 @@ FetchContent_MakeAvailable(glfw)
 
 add_executable(Sandbox
         src/main.cpp
+        src/app/Runner.cpp
 )
 
 target_link_libraries(Sandbox PUBLIC Silk::Math Silk::VK glfw)

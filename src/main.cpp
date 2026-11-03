@@ -3,14 +3,15 @@
 //
 
 #define GLFW_INCLUDE_VULKAN
+#define VK_NO_PROTOTYPES
 #include <GLFW/glfw3.h>
 
 #include <vector>
 
 #include "app/Application.hpp"
 #include "app/Runner.hpp"
-#include "Swapchain.hpp"
-#include "VkSilk.hpp"
+#include "vk/Swapchain.hpp"
+#include "vk/VkSilk.hpp"
 
 using namespace silk;
 
