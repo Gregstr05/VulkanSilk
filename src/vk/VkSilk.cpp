@@ -188,6 +188,7 @@ VulkanContext::VulkanContext(const ContextDesc& desc, const SurfaceProvider& cre
 
         vkGetDeviceQueue(device, graphicsFamily, 0, &graphicsQueue);
         vkGetDeviceQueue(device, presentFamily, 0, &presentQueue);
+        volkLoadDevice(device);
     }
     catch (...)
     {

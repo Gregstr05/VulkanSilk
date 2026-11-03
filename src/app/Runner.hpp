@@ -30,11 +30,11 @@ namespace silk {
 		void Step(float dt);
 		void RecreateSwapchain();
 
+
 	private:
 		struct Frame {
 			VkCommandBuffer cmd = VK_NULL_HANDLE;
 			VkSemaphore imageAvailable = VK_NULL_HANDLE;
-			VkSemaphore renderFinished = VK_NULL_HANDLE;
 			VkFence inFlight = VK_NULL_HANDLE;
 		};
 
@@ -44,8 +44,11 @@ namespace silk {
 
 		VkCommandPool commandPool = VK_NULL_HANDLE;
 		std::vector<Frame> frames;
+		std::vector<VkSemaphore> renderFinished;
 		uint32_t currentFrame = 0;
 
+		void CreateSemaphores();
+		void DestroySemaphores();
 		void DestroyResources();
 	};
 

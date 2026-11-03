@@ -29,14 +29,12 @@ Runner::Runner(VulkanContext& context, Swapchain& swap, Application& application
         {
             vkAllocateCommandBuffers(ctx.Device(), &allocCI, &frame.cmd);
 
-            VkSemaphoreCreateInfo semCI{VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO};
-            vkCreateSemaphore(ctx.Device(), &semCI, nullptr, &frame.imageAvailable);
-            vkCreateSemaphore(ctx.Device(), &semCI, nullptr, &frame.renderFinished);
-
             VkFenceCreateInfo fenceCI{VK_STRUCTURE_TYPE_FENCE_CREATE_INFO};
             fenceCI.flags = VK_FENCE_CREATE_SIGNALED_BIT; // first Step skips the wait
             vkCreateFence(ctx.Device(), &fenceCI, nullptr, &frame.inFlight);
         }
+
+        CreateSemaphores();
 
         app.OnInit(ctx, swapchain);
     }
@@ -55,13 +53,44 @@ Runner::~Runner()
     DestroyResources();
 }
 
-void Runner::DestroyResources()
+void Runner::CreateSemaphores()
 {
-    for (const Frame& frame : frames)
+    VkSemaphoreCreateInfo semCI{VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO};
+
+    for (Frame& frame : frames)
+    {
+        if (vkCreateSemaphore(ctx.Device(), &semCI, nullptr, &frame.imageAvailable) !=
+            VK_SUCCESS)
+            throw std::runtime_error("failed to create semaphore");
+    }
+
+    renderFinished.resize(swapchain.ImageCount());
+    for (VkSemaphore& sem : renderFinished)
+    {
+        if (vkCreateSemaphore(ctx.Device(), &semCI, nullptr, &sem) != VK_SUCCESS)
+            throw std::runtime_error("failed to create semaphore");
+    }
+}
+
+void Runner::DestroySemaphores()
+{
+    for (Frame& frame : frames)
     {
         vkDestroySemaphore(ctx.Device(), frame.imageAvailable, nullptr);
-        vkDestroySemaphore(ctx.Device(), frame.renderFinished, nullptr);
+        frame.imageAvailable = VK_NULL_HANDLE;
+    }
+    for (VkSemaphore sem : renderFinished)
+        vkDestroySemaphore(ctx.Device(), sem, nullptr);
+    renderFinished.clear();
+}
+
+void Runner::DestroyResources()
+{
+    DestroySemaphores();
+    for (Frame& frame : frames)
+    {
         vkDestroyFence(ctx.Device(), frame.inFlight, nullptr);
+        frame.inFlight = VK_NULL_HANDLE;
     }
     frames.clear();
     if (commandPool != VK_NULL_HANDLE)
@@ -105,7 +134,7 @@ void Runner::Step(float dt)
     submit.commandBufferCount = 1;
     submit.pCommandBuffers = &frame.cmd;
     submit.signalSemaphoreCount = 1;
-    submit.pSignalSemaphores = &frame.renderFinished;
+    submit.pSignalSemaphores = &renderFinished[imageIndex];
 
     if (vkQueueSubmit(ctx.GraphicsQueue(), 1, &submit, frame.inFlight) != VK_SUCCESS)
         throw std::runtime_error("failed to submit command buffer");
@@ -113,7 +142,7 @@ void Runner::Step(float dt)
     VkSwapchainKHR handle = swapchain.Handle();
     VkPresentInfoKHR present{VK_STRUCTURE_TYPE_PRESENT_INFO_KHR};
     present.waitSemaphoreCount = 1;
-    present.pWaitSemaphores = &frame.renderFinished;
+    present.pWaitSemaphores = &renderFinished[imageIndex];
     present.swapchainCount = 1;
     present.pSwapchains = &handle;
     present.pImageIndices = &imageIndex;
@@ -129,6 +158,8 @@ void Runner::RecreateSwapchain()
 {
     vkDeviceWaitIdle(ctx.Device());
     swapchain.Recreate();
+    DestroySemaphores();
+    CreateSemaphores();
     app.OnResize(swapchain);
 }
 
