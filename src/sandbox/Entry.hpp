@@ -28,7 +28,7 @@ int RunApp(const char* title)
 		VulkanContext ctx{desc, window.SurfaceProvider()};
 		Swapchain swapchain{ctx};
 		AppT app;
-		Runner runner{ctx, swapchain, app};
+		Runner runner{ctx, swapchain, app, window};
 
 		auto last = std::chrono::steady_clock::now();
 		while (!window.ShouldClose())

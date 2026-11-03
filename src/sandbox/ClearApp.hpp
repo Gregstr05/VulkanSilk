@@ -14,15 +14,19 @@ using namespace silk;
 
 class ClearApp : public Application {
 public:
-    void OnInit(const VulkanContext& ctx, const Swapchain& swapchain) override
+    void OnInit(const VulkanContext& ctx, const Swapchain& swapchain, Window& window) override
     {
         device = ctx.Device();
         CreateRenderPass(swapchain);
         CreateFramebuffers(swapchain);
+        m_window = &window;
     }
 
     void OnUpdate(float dt) override
     {
+        if (m_window->IsKeyDown(Key::Escape))
+            m_window->RequestClose();
+
         color[0] += 0.05f * dt; // proof of life: hue slowly drifts
         color[1] += 0.03f * dt;
         color[2] += 0.07f * dt;
@@ -127,4 +131,5 @@ private:
     VkRenderPass renderPass = VK_NULL_HANDLE;
     std::vector<VkFramebuffer> framebuffers;
     float color[3] = {0.10f, 0.20f, 0.30f};
+    Window* m_window = nullptr;
 };

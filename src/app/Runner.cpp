@@ -8,7 +8,7 @@
 
 namespace silk {
 
-Runner::Runner(VulkanContext& context, Swapchain& swap, Application& application)
+Runner::Runner(VulkanContext& context, Swapchain& swap, Application& application, Window& window)
     : ctx(context), swapchain(swap), app(application)
 {
     try
@@ -36,7 +36,7 @@ Runner::Runner(VulkanContext& context, Swapchain& swap, Application& application
 
         CreateSemaphores();
 
-        app.OnInit(ctx, swapchain);
+        app.OnInit(ctx, swapchain, window);
     }
     catch (...)
     {

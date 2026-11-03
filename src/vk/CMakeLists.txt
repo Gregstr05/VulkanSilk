@@ -18,3 +18,5 @@ FetchContent_Declare(volk
 FetchContent_MakeAvailable(volk)
 
 target_link_libraries(SilkVK PUBLIC volk Silk::Math)
+
+set_property(TARGET SilkVK PROPERTY CXX_STANDARD 20)

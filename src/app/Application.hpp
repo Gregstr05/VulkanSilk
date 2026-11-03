@@ -5,6 +5,7 @@
 #pragma once
 #include <cstdint>
 
+#include "Window.hpp"
 #include "Swapchain.hpp"
 #include "VkSilk.hpp"
 
@@ -21,7 +22,7 @@ class Application {
 public:
 	virtual ~Application() = default;
 
-	virtual void OnInit(const VulkanContext& ctx, const Swapchain& swapchain) = 0;
+	virtual void OnInit(const VulkanContext& ctx, const Swapchain& swapchain, Window& window) = 0;
 
 	virtual void OnUpdate(float dt) = 0;
 

@@ -10,6 +10,7 @@
 #include "VkSilk.hpp"
 
 namespace silk {
+class Window;
 
 	/**
 	 * Owner of the command pool and per-frame sync objects.
@@ -19,7 +20,7 @@ namespace silk {
 	public:
 		static constexpr uint32_t MaxFramesInFlight = 2;
 
-		Runner(VulkanContext& ctx, Swapchain& swapchain, Application& app);
+		Runner(VulkanContext& ctx, Swapchain& swapchain, Application& app, Window& window);
 		~Runner();
 
 		Runner(const Runner&) = delete;
