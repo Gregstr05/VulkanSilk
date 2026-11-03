@@ -5,6 +5,9 @@
 #pragma once
 #include <cstdint>
 
+#include "Swapchain.hpp"
+#include "VkSilk.hpp"
+
 namespace silk {
 
 struct FrameInfo {
@@ -25,6 +28,8 @@ public:
 	virtual void OnRender(const FrameInfo& info) = 0;
 
 	virtual void OnResize(const Swapchain& swapchain) {}
+
+	virtual void OnShutdown(const VulkanContext& ctx) {}
 };
 
 }

@@ -17,4 +17,4 @@ FetchContent_Declare(volk
 )
 FetchContent_MakeAvailable(volk)
 
-target_link_libraries(SilkVK PRIVATE volk)
+target_link_libraries(SilkVK PUBLIC volk)
