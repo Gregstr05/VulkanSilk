@@ -22,4 +22,8 @@ add_executable(Sandbox
 
 target_link_libraries(Sandbox PUBLIC Silk::Math Silk::VK glfw)
 
-set_property(TARGET Sandbox PROPERTY CXX_STANDARD 20)
+set_property(TARGET Sandbox PROPERTY CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+target_compile_features(SilkVK PRIVATE cxx_std_20)
