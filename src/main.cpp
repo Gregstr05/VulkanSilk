@@ -3,9 +3,10 @@
 //
 
 #include "sandbox/ClearApp.hpp"
+#include "sandbox/Triangle/TriangleApp.hpp"
 #include "sandbox/Entry.hpp"
 
 int main()
 {
-	return silk::RunApp<ClearApp>("Silk Sandbox");
+	return silk::RunApp<TriangleApp>("Silk Sandbox");
 }
