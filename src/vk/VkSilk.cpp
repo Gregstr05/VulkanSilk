@@ -2,7 +2,7 @@
 // Created by Gregstr on 07/10/2026.
 //
 
-#define VOLK_IMPLEMENTATION
+//#define VOLK_IMPLEMENTATION
 
 #include "VkSilk.hpp"
 

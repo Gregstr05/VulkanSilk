@@ -135,10 +135,14 @@ namespace silk {
 	{
 		glfwSetInputMode(window, GLFW_CURSOR,
 			enabled ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
+		state.hasPosition = false;
 	}
 
 	void Window::PollEvents()
 	{
+		state.pressed.fill(false);
+		state.released.fill(false);
+		state.deltaX = state.deltaY = 0.0;
 		glfwPollEvents();
 	}
 

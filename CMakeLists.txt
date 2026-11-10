@@ -2,6 +2,10 @@ cmake_minimum_required(VERSION 3.20)
 
 project(VulkanSilk)
 
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
 add_subdirectory(src/math)
 add_subdirectory(src/vk)
 add_subdirectory(src/app)
@@ -24,9 +28,5 @@ add_executable(Sandbox
 target_include_directories(Sandbox PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 target_link_libraries(Sandbox PRIVATE Silk::App Silk::Math Silk::Window)
-
-set_property(TARGET Sandbox PROPERTY CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
 
 target_compile_features(SilkVK PRIVATE cxx_std_20)

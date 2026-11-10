@@ -49,7 +49,7 @@ namespace silk::math {
 // Vulkan perspective: depth [0, 1], y flipped for Vulkan's y-down NDC.
 // The flip inverts screen-space winding, so use
 // frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE with back-face culling.
-[[nodiscard]] Matrix4 Perspective(float fovY, float aspect, float nearZ, float farZ)
+[[nodiscard]] inline Matrix4 Perspective(float fovY, float aspect, float nearZ, float farZ)
 {
 	Matrix4 m{};
 	float f = 1.f / std::tan(fovY / 2.f);
@@ -61,7 +61,7 @@ namespace silk::math {
 	return m;
 }
 
-[[nodiscard]] Matrix4 Ortho(float left, float right, float bottom, float top, float nearZ, float farZ)
+[[nodiscard]] inline Matrix4 Ortho(float left, float right, float bottom, float top, float nearZ, float farZ)
 {
 	Matrix4 m{};
 	m(0, 0) = 2.f / (right - left);
@@ -76,7 +76,7 @@ namespace silk::math {
 
 // Right-handed view matrix. Degenerates if the view direction is parallel
 // to worldUp (looking straight up/down) - pass a different up in that case.
-[[nodiscard]] Matrix4 LookAt(const Vector3& eye, const Vector3& target,
+[[nodiscard]] inline Matrix4 LookAt(const Vector3& eye, const Vector3& target,
 	const Vector3& worldUp = Vector3(0.f, 0.f, 1.f))
 {
 	Vector3 forward = (target - eye).Normalize();
